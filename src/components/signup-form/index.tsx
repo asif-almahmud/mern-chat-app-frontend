@@ -1,6 +1,14 @@
-import { Box, Button, TextField } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { object, string } from "yup";
 
 const initialValues = {
@@ -20,6 +28,8 @@ const validationSchema = object({
 type Props = {};
 
 const SignupForm = (props: Props) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleSubmit = (
     values: typeof initialValues,
     formikHelpers: FormikHelpers<typeof initialValues>
@@ -63,7 +73,7 @@ const SignupForm = (props: Props) => {
             <Box height={14} />
             <Field
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               as={TextField}
               variant="standard"
               color="primary"
@@ -71,6 +81,20 @@ const SignupForm = (props: Props) => {
               fullWidth
               error={Boolean(errors.password) && Boolean(touched.password)}
               helperText={Boolean(touched.password) && errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Box height={24} />
             <Button
