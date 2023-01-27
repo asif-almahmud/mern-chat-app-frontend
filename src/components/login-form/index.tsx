@@ -1,26 +1,39 @@
 import { Box, Button, TextField } from "@mui/material";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import React from "react";
+import { object, string } from "yup";
 
 const initialValues = {
   email: "",
   password: "",
 };
 
-const handleSubmit = (
-  values: typeof initialValues,
-  formikHelpers: FormikHelpers<typeof initialValues>
-) => {
-  console.log({ values });
-};
+const validationSchema = object({
+  email: string().required("Please enter email").email("Invalid email"),
+  password: string()
+    .required("Please enter password")
+    .min(8, "Password should be minimum of 8 characters"),
+});
 
 type Props = {};
 
 const LoginForm = (props: Props) => {
+  const handleSubmit = (
+    values: typeof initialValues,
+    formikHelpers: FormikHelpers<typeof initialValues>
+  ) => {
+    console.log({ values });
+    formikHelpers.resetForm();
+  };
+
   return (
     <div>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {() => (
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+      >
+        {({ errors, isValid, touched, dirty }) => (
           <Form>
             <Field
               name="email"
@@ -28,8 +41,10 @@ const LoginForm = (props: Props) => {
               as={TextField}
               variant="standard"
               color="primary"
-              label="Email"
+              label="Email *"
               fullWidth
+              error={Boolean(errors.email) && Boolean(touched.email)}
+              helperText={Boolean(touched.email) && errors.email}
             />
             <Box height={14} />
             <Field
@@ -38,16 +53,19 @@ const LoginForm = (props: Props) => {
               as={TextField}
               variant="standard"
               color="primary"
-              label="Password"
+              label="Password *"
               fullWidth
+              error={Boolean(errors.password) && Boolean(touched.password)}
+              helperText={Boolean(touched.password) && errors.password}
             />
-            <Box height={16} />
+            <Box height={24} />
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               fullWidth
+              disabled={!dirty || !isValid}
             >
               Login
             </Button>
