@@ -1,9 +1,9 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { fetchChats } from "../api/chats/fetchChats";
+import { fetchChats } from "../requests/fetchChats";
 
-const useChats = () => {
+const useLoadChats = () => {
   return useQuery("chats", fetchChats);
 };
 
-export default useChats;
+export default useLoadChats;

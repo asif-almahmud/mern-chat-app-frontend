@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import useChats from "../../hooks/useChats";
+import useLoadChats from "../../api/hooks/useLoadChats";
 import { IChat } from "../../types/types";
 
 const Home = () => {
-  const { data, isLoading } = useChats();
+  const { data, isLoading } = useLoadChats();
   return isLoading ? (
     <div>Loading...</div>
   ) : (

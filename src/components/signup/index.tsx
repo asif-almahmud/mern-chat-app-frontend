@@ -9,12 +9,13 @@ import {
 } from "@mui/material";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
-import { object, string } from "yup";
+import { object, ref, string } from "yup";
 
 const initialValues = {
   name: "",
   email: "",
   password: "",
+  confirmPassword: "",
 };
 
 const validationSchema = object({
@@ -22,13 +23,18 @@ const validationSchema = object({
   email: string().required("Please enter email").email("Invalid email"),
   password: string()
     .required("Please enter password")
-    .min(8, "Password should be minimum of 8 characters"),
+    .min(6, "Password should be minimum of 6 characters"),
+  confirmPassword: string()
+    .required("Please enter password")
+    .min(6, "Password should be minimum of 6 characters")
+    .oneOf([ref("password"), null], "Password didn't match"),
 });
 
 type Props = {};
 
-const SignupForm = (props: Props) => {
+const Signup = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = (
     values: typeof initialValues,
@@ -36,6 +42,8 @@ const SignupForm = (props: Props) => {
   ) => {
     console.log({ values });
     formikHelpers.resetForm();
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
   return (
@@ -45,7 +53,7 @@ const SignupForm = (props: Props) => {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
-        {({ errors, isValid, touched, dirty }) => (
+        {({ errors, isValid, touched, dirty, values, validateField }) => (
           <Form>
             <Field
               name="name"
@@ -96,6 +104,37 @@ const SignupForm = (props: Props) => {
                 ),
               }}
             />
+            <Box height={14} />
+            <Field
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              as={TextField}
+              variant="standard"
+              color="primary"
+              label="Confirm Password *"
+              fullWidth
+              error={
+                Boolean(errors.confirmPassword) &&
+                Boolean(touched.confirmPassword)
+              }
+              helperText={
+                Boolean(touched.confirmPassword) && errors.confirmPassword
+              }
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle confirm password visibility"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
             <Box height={24} />
             <Button
               type="submit"
@@ -103,7 +142,13 @@ const SignupForm = (props: Props) => {
               color="primary"
               size="large"
               fullWidth
-              disabled={!dirty || !isValid}
+              disabled={
+                Boolean(errors.name) ||
+                Boolean(errors.email) ||
+                Boolean(errors.password) ||
+                values.confirmPassword.length === 0 ||
+                !(values.confirmPassword.length >= values.password.length)
+              }
             >
               Signup
             </Button>
@@ -114,4 +159,4 @@ const SignupForm = (props: Props) => {
   );
 };
 
-export default SignupForm;
+export default Signup;

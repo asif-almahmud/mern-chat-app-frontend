@@ -25,7 +25,7 @@ const validationSchema = object({
 
 type Props = {};
 
-const LoginForm = (props: Props) => {
+const Login = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = (
     values: typeof initialValues,
@@ -99,4 +99,4 @@ const LoginForm = (props: Props) => {
   );
 };
 
-export default LoginForm;
+export default Login;
